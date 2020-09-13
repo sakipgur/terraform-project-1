@@ -1,0 +1,242 @@
+Comment out/in multiple lines --> Ctrl + /
+Comment out selected --> Option + Shift + A
+
+TERRAFORM FILES:
+    .terraform
+        .terraform folder is for plugins.
+        So if this folder is deleted by mistake, you need to re-run "terraform init" command. 
+        Nothing will be broken or changed. Just command will install/update required plugins
+
+    terraform.tfstate
+        It is kind of tracking file for the changes in the code so in our cloud environment.
+        IT IS VERY IMPORTANT, IF IT IS DELETED YOU CAN BREAK EVERYTHING
+        THERE WILL BE A  MISS-MATCH BETWEEN WHAT DEPLOYED
+        
+SOME TERRAFORM COMMANDS
+    terraform state list
+        sakipgur:project-1 $ terraform state list
+        aws_instance.techproed_default
+        aws_instance.techproed_server_1
+        aws_subnet.techproed-subnet
+        aws_vpc.techproed-vpc
+        sakipgur:project-1 $ cd -
+        /Users/sakipgur/TechProEd/terraform/project-2
+        sakipgur:project-2 $ terraform state list
+        aws_eip.techproed-eip-2
+        aws_instance.techproed-instance-2
+        aws_internet_gateway.techproed-gw-2
+        aws_network_interface.techproed-interface-2
+        aws_route_table.techproed-route-2
+        aws_route_table_association.techproed-association-2
+        aws_security_group.techproed-securitygroup-2
+        aws_subnet.techproed-subnet-2
+        aws_vpc.techproed-vpc-2
+
+    terraform state show
+        sakipgur:project-2 $ terraform state show aws_eip.techproed-eip-2
+        # aws_eip.techproed-eip-2:
+        resource "aws_eip" "techproed-eip-2" {
+            associate_with_private_ip = "10.0.1.50"
+            association_id            = "eipassoc-02cc7839ddcff788a"
+            domain                    = "vpc"
+            id                        = "eipalloc-00e8a0c0e50df7943"
+            instance                  = "i-0420ee888c0c5fcdc"
+            network_interface         = "eni-085505fe213fd8e8f"
+            private_dns               = "ip-10-0-1-50.ec2.internal"
+            private_ip                = "10.0.1.50"
+            public_dns                = "ec2-23-20-136-242.compute-1.amazonaws.com"
+            public_ip                 = "23.20.136.242"
+            public_ipv4_pool          = "amazon"
+            tags                      = {}
+            vpc                       = true
+        }
+
+        sakipgur:project-2 $ terraform state show aws_instance.techproed-instance-2
+        # aws_instance.techproed-instance-2:
+        resource "aws_instance" "techproed-instance-2" {
+            ami                          = "ami-098f16afa9edf40be"
+            arn                          = "arn:aws:ec2:us-east-1:346467337652:instance/i-039af1bed1d7164bb"
+            associate_public_ip_address  = true
+            availability_zone            = "us-east-1a"
+            cpu_core_count               = 1
+            cpu_threads_per_core         = 1
+            disable_api_termination      = false
+            ebs_optimized                = false
+            get_password_data            = false
+            hibernation                  = false
+            id                           = "i-039af1bed1d7164bb"
+            instance_state               = "running"
+            instance_type                = "t2.micro"
+            ipv6_address_count           = 0
+            ipv6_addresses               = []
+            key_name                     = "techproed_keypair"
+            monitoring                   = false
+            primary_network_interface_id = "eni-085505fe213fd8e8f"
+            private_dns                  = "ip-10-0-1-50.ec2.internal"
+            private_ip                   = "10.0.1.50"
+            public_ip                    = "23.20.136.242"
+            secondary_private_ips        = []
+            security_groups              = []
+            source_dest_check            = true
+            subnet_id                    = "subnet-02884d7cdcd4f527b"
+            tags                         = {
+                "Name" = "techproed-instance-2"
+            }
+            tenancy                      = "default"
+            user_data                    = "70ea1d7131cd4d84f4dd102c247ea074641e5786"
+            volume_tags                  = {}
+            vpc_security_group_ids       = [
+                "sg-0c2a3af4ddc26723f",
+            ]
+
+            credit_specification {
+                cpu_credits = "standard"
+            }
+
+            metadata_options {
+                http_endpoint               = "enabled"
+                http_put_response_hop_limit = 1
+                http_tokens                 = "optional"
+            }
+
+            network_interface {
+                delete_on_termination = false
+                device_index          = 0
+                network_interface_id  = "eni-085505fe213fd8e8f"
+            }
+
+            root_block_device {
+                delete_on_termination = true
+                device_name           = "/dev/sda1"
+                encrypted             = false
+                iops                  = 100
+                volume_id             = "vol-0a3cdbc058781969c"
+                volume_size           = 10
+                volume_type           = "gp2"
+            }
+        }
+        sakipgur:project-2 $ 
+
+    output module will handle to print out some attributes
+
+        sakipgur:project-2 $ terraform apply --auto-approve
+        aws_vpc.techproed-vpc-2: Refreshing state... [id=vpc-03783561f4fe73379]
+        aws_internet_gateway.techproed-gw-2: Refreshing state... [id=igw-01d11288f909d3a91]
+        aws_subnet.techproed-subnet-2: Refreshing state... [id=subnet-02884d7cdcd4f527b]
+        aws_security_group.techproed-securitygroup-2: Refreshing state... [id=sg-0c2a3af4ddc26723f]
+        aws_route_table.techproed-route-2: Refreshing state... [id=rtb-03ebc1279543995b6]
+        aws_network_interface.techproed-interface-2: Refreshing state... [id=eni-085505fe213fd8e8f]
+        aws_route_table_association.techproed-association-2: Refreshing state... [id=rtbassoc-0881ece953074e0d8]
+        aws_eip.techproed-eip-2: Refreshing state... [id=eipalloc-00e8a0c0e50df7943]
+        aws_instance.techproed-instance-2: Refreshing state... [id=i-039af1bed1d7164bb]
+
+        Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+
+        Outputs:
+
+        server_public_dns = ec2-23-20-136-242.compute-1.amazonaws.com
+        server_public_ip = 23.20.136.242
+
+        sakipgur:project-2 $ terraform output
+        server_public_dns = ec2-23-20-136-242.compute-1.amazonaws.com
+        server_public_ip = 23.20.136.242
+        sakipgur:project-2 $ 
+
+    terraform refresh
+
+        sakipgur:project-2 $ terraform refresh
+        aws_vpc.techproed-vpc-2: Refreshing state... [id=vpc-03783561f4fe73379]
+        aws_internet_gateway.techproed-gw-2: Refreshing state... [id=igw-01d11288f909d3a91]
+        aws_subnet.techproed-subnet-2: Refreshing state... [id=subnet-02884d7cdcd4f527b]
+        aws_security_group.techproed-securitygroup-2: Refreshing state... [id=sg-0c2a3af4ddc26723f]
+        aws_route_table.techproed-route-2: Refreshing state... [id=rtb-03ebc1279543995b6]
+        aws_network_interface.techproed-interface-2: Refreshing state... [id=eni-085505fe213fd8e8f]
+        aws_route_table_association.techproed-association-2: Refreshing state... [id=rtbassoc-0881ece953074e0d8]
+        aws_eip.techproed-eip-2: Refreshing state... [id=eipalloc-00e8a0c0e50df7943]
+        aws_instance.techproed-instance-2: Refreshing state... [id=i-039af1bed1d7164bb]
+
+        Outputs:
+
+        server_private_ip = 10.0.1.50
+        server_public_dns = ec2-23-20-136-242.compute-1.amazonaws.com
+        server_public_ip = 23.20.136.242
+
+    terraform destroy -target <resource_name>
+    terraform apply -target <resource_name>
+
+        sakipgur:project-1 $ terraform state list
+        aws_instance.techproed_default
+        aws_instance.techproed_server_1
+        aws_subnet.techproed-subnet
+        aws_vpc.techproed-vpc
+        sakipgur:project-1 $ terraform destroy -target aws_instance.techproed_server_1 --auto-approve
+        aws_vpc.techproed-vpc: Refreshing state... [id=vpc-0987663648bf0202f]
+        aws_subnet.techproed-subnet: Refreshing state... [id=subnet-09bd439dca1632fdc]
+        aws_instance.techproed_server_1: Refreshing state... [id=i-02b53ed7fcfab7ff6]
+        aws_instance.techproed_server_1: Destroying... [id=i-02b53ed7fcfab7ff6]
+        aws_instance.techproed_server_1: Still destroying... [id=i-02b53ed7fcfab7ff6, 10s elapsed]
+        aws_instance.techproed_server_1: Still destroying... [id=i-02b53ed7fcfab7ff6, 20s elapsed]
+        aws_instance.techproed_server_1: Still destroying... [id=i-02b53ed7fcfab7ff6, 30s elapsed]
+        aws_instance.techproed_server_1: Destruction complete after 31s
+
+        Warning: Resource targeting is in effect
+
+        You are creating a plan with the -target option, which means that the result
+        of this plan may not represent all of the changes requested by the current
+        configuration.
+
+        The -target option is not for routine use, and is provided only for
+        exceptional situations such as recovering from errors or mistakes, or when
+        Terraform specifically suggests to use it as part of an error message.
+
+
+        Warning: Applied changes may be incomplete
+
+        The plan was created with the -target option in effect, so some changes
+        requested in the configuration may have been ignored and the output values may
+        not be fully updated. Run the following command to verify that no other
+        changes are pending:
+            terraform plan
+
+        Note that the -target option is not suitable for routine use, and is provided
+        only for exceptional situations such as recovering from errors or mistakes, or
+        when Terraform specifically suggests to use it as part of an error message.
+
+
+        Destroy complete! Resources: 1 destroyed.
+        sakipgur:project-1 $ terraform apply -target aws_instance.techproed_server_1 --auto-approve
+        aws_vpc.techproed-vpc: Refreshing state... [id=vpc-0987663648bf0202f]
+        aws_subnet.techproed-subnet: Refreshing state... [id=subnet-09bd439dca1632fdc]
+        aws_instance.techproed_server_1: Creating...
+        aws_instance.techproed_server_1: Still creating... [10s elapsed]
+        aws_instance.techproed_server_1: Still creating... [20s elapsed]
+        aws_instance.techproed_server_1: Still creating... [30s elapsed]
+        aws_instance.techproed_server_1: Still creating... [40s elapsed]
+        aws_instance.techproed_server_1: Creation complete after 46s [id=i-01558a22a22987e8c]
+
+        Warning: Resource targeting is in effect
+
+        You are creating a plan with the -target option, which means that the result
+        of this plan may not represent all of the changes requested by the current
+        configuration.
+
+        The -target option is not for routine use, and is provided only for
+        exceptional situations such as recovering from errors or mistakes, or when
+        Terraform specifically suggests to use it as part of an error message.
+
+
+        Warning: Applied changes may be incomplete
+
+        The plan was created with the -target option in effect, so some changes
+        requested in the configuration may have been ignored and the output values may
+        not be fully updated. Run the following command to verify that no other
+        changes are pending:
+            terraform plan
+
+        Note that the -target option is not suitable for routine use, and is provided
+        only for exceptional situations such as recovering from errors or mistakes, or
+        when Terraform specifically suggests to use it as part of an error message.
+
+
+        Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+        sakipgur:project-1 $ 
