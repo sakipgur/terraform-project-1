@@ -7,9 +7,9 @@
 # Authentication, be carefull, you will see these credentials just once. So after creating you have to save credentials csv file.
 
 provider "aws" {
-  region  = "us-east-1"
-  access_key = "AKIAVBKYQAW2CJ7YNYNW"
-  secret_key = "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"
+  region  = "<region>"
+  access_key = "<access_key>"
+  secret_key = "<secret_key>"
 }
 
 # resource "<provider>_<resource>" "name"{
